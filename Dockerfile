@@ -8,6 +8,9 @@
 FROM mozillabteam/bmo-ci
 MAINTAINER David Lawrence <dkl@mozilla.com>
 
+ENV GIT_BASE_BRANCH master
+ENV BUGZILLA_ROOT /home/bugzilla/devel/htdocs/bmo
+
 ENV CONDUIT_LOGIN conduit@mozilla.bugs
 ENV CONDUIT_PASSWORD password
 ENV CONDUIT_API_KEY zQ5TSBzq7tTZMtKYq9K1ZqJMjifKx3cPL7pIGk9Q
