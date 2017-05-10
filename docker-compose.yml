@@ -7,7 +7,7 @@ services:
   bmo:
     build: .
     ports:
-      - "8080:80"
+      - "7777:80"
     volumes:
       - bmo-mysql-db:/var/lib/mysql
 
