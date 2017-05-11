@@ -14,26 +14,22 @@ ENV CONDUIT_LOGIN conduit@mozilla.bugs
 ENV CONDUIT_PASSWORD password
 ENV CONDUIT_API_KEY zQ5TSBzq7tTZMtKYq9K1ZqJMjifKx3cPL7pIGk9Q
 
+EnV BUGS_MYSQL_HOST localhost
+ENV BUGS_MYSQL_DBNAME bugs
+ENV BUGS_MYSQL_USER bugs
+ENV BUGS_MYSQL_PASSWORD bugs
+ENV MYSQL_ROOT_PASSWORD password
+
 # Distribution package installation
 COPY conf/rpm_list /
 RUN yum install -q -y yum-plugin-ovl && yum -q -y install `cat /rpm_list` && yum -q clean all
-
-# Apache setup
-COPY conf/bugzilla.conf /etc/httpd/conf.d/bugzilla.conf
 
 # Sudoers setup
 COPY conf/sudoers /etc/sudoers
 RUN chown root.root /etc/sudoers && chmod 440 /etc/sudoers
 
-# Supervisor setup
-COPY conf/supervisord.conf /etc/supervisord.conf
-RUN chmod 700 /etc/supervisord.conf
-
-# Copy setup scripts
-COPY scripts/* /usr/local/bin/
-RUN chmod 755 /usr/local/bin/*
-
-# Apache fixes
+# Apache setup
+COPY conf/bugzilla.conf /etc/httpd/conf.d/bugzilla.conf
 RUN sed -e "s?^User apache?User $BUGZILLA_USER?" --in-place /etc/httpd/conf/httpd.conf
 RUN sed -e "s?^Group apache?Group $BUGZILLA_USER?" --in-place /etc/httpd/conf/httpd.conf
 
@@ -42,7 +38,15 @@ RUN rm -rf $BUGZILLA_ROOT \
     && git clone $GITHUB_BASE_GIT -b $GITHUB_BASE_BRANCH $BUGZILLA_ROOT \
     && ln -sf $BUGZILLA_LIB $BUGZILLA_ROOT/local
 COPY conf/checksetup_answers.txt $BUGZILLA_ROOT/checksetup_answers.txt
+
+# Copy and run setup scripts
+COPY scripts/* /usr/local/bin/
+RUN chmod 755 /usr/local/bin/*
 RUN bugzilla_config.sh
 RUN su - $BUGZILLA_USER -c dev_config.sh
+
+# Supervisor setup
+COPY conf/supervisord.conf /etc/supervisord.conf
+RUN chmod 700 /etc/supervisord.conf
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
