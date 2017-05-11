@@ -4,10 +4,10 @@
 
 version: '2'
 services:
-  bmo:
+  bmo.dev:
     build: .
     ports:
-      - "7777:80"
+      - "7777:7777"
     volumes:
       - bmo-mysql-db:/var/lib/mysql
 
