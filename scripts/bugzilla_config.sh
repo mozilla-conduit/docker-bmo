@@ -12,20 +12,7 @@ cd $BUGZILLA_ROOT
 /usr/bin/mysqld_safe &
 
 # Wait for database
-NUM_TRIES=1
-MAX_TRIES=10
-echo -e "Waiting for MySQL "
-until mysql -h ${BUGS_MYSQL_HOST} -u root &> /dev/null
-do
-    if [ $NUM_TRIES -gt $MAX_TRIES ]; then
-        echo -e "Timed out waiting for mysql\n"
-        exit 1
-    fi
-    NUM_TRIES=$((++NUM_TRIES))
-    printf "."
-    sleep 1
-done
-echo -e "\nMySQL ready"
+mysqladmin -h${BUGS_MYSQL_HOST} --silent --wait=30 ping || exit 1
 
 # Configure database
 mysql -u root -h ${BUGS_MYSQL_HOST} mysql -e "GRANT ALL PRIVILEGES ON *.* TO ${BUGS_MYSQL_USER}@localhost IDENTIFIED BY '${BUGS_MYSQL_PASSWORD}'; FLUSH PRIVILEGES;"
