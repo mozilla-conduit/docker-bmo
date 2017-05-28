@@ -26,7 +26,7 @@ my $admin_email = shift || 'admin@mozilla.bugs';
 Bugzilla->set_user(Bugzilla::User->check({ name => $admin_email }));
 
 ##########################################################################
-# Create Conduit User
+# Create Conduit Test User
 ##########################################################################
 
 my $conduit_login    = $ENV{CONDUIT_LOGIN}    || 'conduit@mozilla.bugs';
@@ -50,6 +50,53 @@ if ($conduit_api_key) {
             api_key     => $conduit_api_key
         }
     );
+}
+
+##########################################################################
+# Create Phabricator Test User
+##########################################################################
+
+my $phab_login    = $ENV{PHABRICATOR_LOGIN}    || 'phab@mozilla.bugs';
+my $phab_password = $ENV{PHABRICATOR_PASSWORD} || 'password';
+my $phab_api_key  = $ENV{PHABRICATOR_API_KEY}  || '';
+
+print "creating phabricator user account...\n";
+$new_user = Bugzilla::User->create(
+    {
+        login_name    => $phab_login,
+        realname      => 'Phabricator Test User',
+        cryptpassword => $phab_password
+    },
+);
+
+if ($phab_api_key) {
+    Bugzilla::User::APIKey->create_special(
+        {
+            user_id     => $new_user->id,
+            description => 'API key for Phabricator User',
+            api_key     => $phab_api_key
+        }
+    );
+}
+
+##########################################################################
+# Add Users to Groups
+##########################################################################
+my @users_groups = (
+	{ user => 'conduit@mozilla.bugs', group => 'core-security' },
+    { user => 'phab@mozilla.bugs', 	  group => 'partner-confidential' },
+);
+print "adding users to groups...\n";
+foreach my $user_group (@users_groups) {
+	my $group = new Bugzilla::Group( { name => $user_group->{group} } );
+	my $user = new Bugzilla::User( { name => $user_group->{user} } );
+	my $sth_add_mapping = $dbh->prepare(
+		qq{INSERT INTO user_group_map (user_id, group_id, isbless, grant_type)
+		   VALUES (?, ?, ?, ?)});
+	# Don't crash if the entry already exists.
+	eval {
+		$sth_add_mapping->execute( $user->id, $group->id, 0, GRANT_DIRECT );
+	};
 }
 
 ##########################################################################
