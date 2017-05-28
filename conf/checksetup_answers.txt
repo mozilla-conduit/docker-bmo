@@ -25,6 +25,6 @@ $answer{'diffpath'} = '/usr/bin';
 $answer{'index_html'} = 0;
 $answer{'interdiffbin'} = '/usr/bin/interdiff';
 $answer{'memcached_servers'} = "localhost:11211";
-$answer{'urlbase'} = 'http://bmo.dev/';
+$answer{'urlbase'} = 'http://bmo.test/';
 $answer{'use_suexec'} = '';
 $answer{'webservergroup'} = 'bugzilla';
