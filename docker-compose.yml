@@ -4,7 +4,7 @@
 
 version: '2'
 services:
-  bmo.dev:
+  bmo.test:
     build: .
     ports:
       - "80:80"
