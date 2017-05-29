@@ -8,6 +8,7 @@
 FROM mozillabteam/bmo-ci
 MAINTAINER David Lawrence <dkl@mozilla.com>
 
+ENV GITHUB_BASE_GIT https://github.com/mozilla-conduit/bmo
 ENV GIT_BASE_BRANCH master
 
 ENV CONDUIT_LOGIN conduit@mozilla.bugs
@@ -33,6 +34,9 @@ COPY conf/bugzilla.conf /etc/httpd/conf.d/bugzilla.conf
 RUN sed -e "s?^User apache?User $BUGZILLA_USER?" --in-place /etc/httpd/conf/httpd.conf
 RUN sed -e "s?^Group apache?Group $BUGZILLA_USER?" --in-place /etc/httpd/conf/httpd.conf
 
+# Postfix fix
+RUN sed -e "s?^inet_protocols = all?inet_protocols = ipv4?" --in-place /etc/postfix/main.cf
+
 # Development environment setup
 RUN rm -rf $BUGZILLA_ROOT \
     && git clone $GITHUB_BASE_GIT -b $GITHUB_BASE_BRANCH $BUGZILLA_ROOT \
@@ -46,8 +50,9 @@ RUN bugzilla_config.sh
 RUN su - $BUGZILLA_USER -c dev_config.sh
 
 # Supervisor setup
-COPY conf/postfix_main.cf /etc/postfix/main.cf
 COPY conf/supervisord.conf /etc/supervisord.conf
-RUN chmod 644 /etc/supervisord.conf /etc/postfix/main.cf
+RUN chmod 644 /etc/supervisord.conf
+
+RUN chown -R $BUGZILLA_USER.$BUGZILLA_USER $BUGZILLA_ROOT
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
