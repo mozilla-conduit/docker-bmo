@@ -46,7 +46,8 @@ RUN bugzilla_config.sh
 RUN su - $BUGZILLA_USER -c dev_config.sh
 
 # Supervisor setup
+COPY conf/postfix_main.cf /etc/postfix/main.cf
 COPY conf/supervisord.conf /etc/supervisord.conf
-RUN chmod 700 /etc/supervisord.conf
+RUN chmod 644 /etc/supervisord.conf /etc/postfix/main.cf
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
