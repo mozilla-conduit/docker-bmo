@@ -18,6 +18,7 @@ mysqladmin -h${BUGS_MYSQL_HOST} --silent --wait=30 ping || exit 1
 mysql -u root -h ${BUGS_MYSQL_HOST} mysql -e "GRANT ALL PRIVILEGES ON *.* TO ${BUGS_MYSQL_USER}@localhost IDENTIFIED BY '${BUGS_MYSQL_PASSWORD}'; FLUSH PRIVILEGES;"
 mysql -u root -h ${BUGS_MYSQL_HOST} mysql -e "CREATE DATABASE ${BUGS_MYSQL_DBNAME} CHARACTER SET = 'utf8';"
 
+/usr/local/bin/cpanm ExtUtils::MakeMaker
 /usr/local/bin/cpanm --installdeps --quiet --notest .
 
 perl checksetup.pl checksetup_answers.txt
