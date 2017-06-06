@@ -8,7 +8,6 @@
 FROM mozillabteam/bmo-ci
 MAINTAINER David Lawrence <dkl@mozilla.com>
 
-ENV GITHUB_BASE_GIT https://github.com/mozilla-conduit/bmo
 ENV GIT_BASE_BRANCH master
 
 ENV CONDUIT_LOGIN conduit@mozilla.bugs
