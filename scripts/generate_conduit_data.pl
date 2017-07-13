@@ -53,18 +53,18 @@ if ($conduit_api_key) {
 }
 
 ##########################################################################
-# Create Phabricator Test User
+# Create Phabricator Automation Bot
 ##########################################################################
 
-my $phab_login    = $ENV{PHABRICATOR_LOGIN}    || 'phab@mozilla.bugs';
+my $phab_login    = $ENV{PHABRICATOR_LOGIN}    || 'phab-bot@bmo.tld';
 my $phab_password = $ENV{PHABRICATOR_PASSWORD} || 'password';
 my $phab_api_key  = $ENV{PHABRICATOR_API_KEY}  || '';
 
-print "creating phabricator user account...\n";
+print "creating phabricator automation account...\n";
 $new_user = Bugzilla::User->create(
     {
         login_name    => $phab_login,
-        realname      => 'Phabricator Test User',
+        realname      => 'Phabricator Automation',
         cryptpassword => $phab_password
     },
 );
@@ -73,7 +73,7 @@ if ($phab_api_key) {
     Bugzilla::User::APIKey->create_special(
         {
             user_id     => $new_user->id,
-            description => 'API key for Phabricator User',
+            description => 'API key for Phabricator Automation',
             api_key     => $phab_api_key
         }
     );
@@ -83,8 +83,10 @@ if ($phab_api_key) {
 # Add Users to Groups
 ##########################################################################
 my @users_groups = (
-	{ user => 'conduit@mozilla.bugs', group => 'core-security' },
-    { user => 'phab@mozilla.bugs', 	  group => 'partner-confidential' },
+    { user => 'conduit@mozilla.bugs', group => 'editbugs' },
+    { user => 'conduit@mozilla.bugs', group => 'core-security' },
+    { user => 'phab-bot@bmo.tld', 	  group => 'editbugs' },
+    { user => 'phab-bot@bmo.tld', 	  group => 'core-security' },
 );
 print "adding users to groups...\n";
 foreach my $user_group (@users_groups) {
