@@ -1,2 +1,2 @@
 # docker-bmo
-BMO Docker image customized for use by the Conduit Project
+BMO Docker image customized for use by the Conduit Project for Mozilla.
