@@ -26,7 +26,10 @@ ENV MYSQL_ROOT_PASSWORD password
 
 # Distribution package installation
 COPY conf/rpm_list /
-RUN yum install -q -y yum-plugin-ovl && yum -q -y install `cat /rpm_list` && yum -q clean all
+RUN touch /var/lib/rpm/* \
+    && yum install -q -y yum-plugin-ovl \
+    && yum -q -y install `cat /rpm_list` \
+    && yum -q clean all
 
 # Sudoers setup
 COPY conf/sudoers /etc/sudoers
