@@ -9,6 +9,7 @@ use lib qw(. lib local/lib/perl5);
 
 use Bugzilla;
 use Bugzilla::Bug;
+use Bugzilla::Config qw(:admin);
 use Bugzilla::Constants;
 use Bugzilla::User;
 use Bugzilla::User::APIKey;
@@ -30,7 +31,7 @@ Bugzilla->set_user(Bugzilla::User->check({ name => $admin_email }));
 ##########################################################################
 
 my $conduit_login    = $ENV{CONDUIT_LOGIN}    || 'conduit@mozilla.bugs';
-my $conduit_password = $ENV{CONDUIT_PASSWORD} || 'password';
+my $conduit_password = $ENV{CONDUIT_PASSWORD} || 'password123456789!';
 my $conduit_api_key  = $ENV{CONDUIT_API_KEY}  || '';
 
 print "creating conduit user account...\n";
@@ -57,7 +58,7 @@ if ($conduit_api_key) {
 ##########################################################################
 
 my $phab_login    = $ENV{PHABRICATOR_LOGIN}    || 'phab-bot@bmo.tld';
-my $phab_password = $ENV{PHABRICATOR_PASSWORD} || 'password';
+my $phab_password = $ENV{PHABRICATOR_PASSWORD} || 'password123456789!';
 my $phab_api_key  = $ENV{PHABRICATOR_API_KEY}  || '';
 
 print "creating phabricator automation account...\n";
@@ -121,5 +122,23 @@ Bugzilla::Bug->create(
         version      => 'unspecified',
     }
 );
+
+##########################################################################
+# Set Parameters
+##########################################################################
+
+my %set_params = (
+    password_check_on_login => 0,
+);
+
+my $params_modified;
+foreach my $param (keys %set_params) {
+    my $value = $set_params{$param};
+    next unless defined $value && Bugzilla->params->{$param} ne $value;
+    SetParam($param, $value);
+    $params_modified = 1;
+}
+
+write_params() if $params_modified;
 
 print "installation and configuration complete!\n";

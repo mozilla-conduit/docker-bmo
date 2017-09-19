@@ -1,7 +1,7 @@
 $answer{'ADMIN_EMAIL'} = 'admin@mozilla.bugs';
 $answer{'ADMIN_LOGIN'} = 'admin';
 $answer{'ADMIN_OK'} = 'Y';
-$answer{'ADMIN_PASSWORD'} = 'password';
+$answer{'ADMIN_PASSWORD'} = 'password123456789!';
 $answer{'ADMIN_REALNAME'} = 'QA Admin';
 $answer{'NO_PAUSE'} = 1;
 $answer{'apache_size_limit'} = 700000;
