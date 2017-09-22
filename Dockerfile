@@ -55,10 +55,6 @@ RUN chmod 755 /usr/local/bin/*
 RUN bugzilla_config.sh
 RUN su - $BUGZILLA_USER -c dev_config.sh
 
-# Supervisor setup
-COPY conf/supervisord.conf /etc/supervisord.conf
-RUN chmod 644 /etc/supervisord.conf
-
 RUN chown -R $BUGZILLA_USER.$BUGZILLA_USER $BUGZILLA_ROOT
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+CMD ["entrypoint.sh"]
