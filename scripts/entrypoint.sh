@@ -17,6 +17,4 @@ echo -e "\n== Starting push daemon"
 su - $BUGZILLA_USER -c "cd $BUGZILLA_ROOT; perl ./extensions/Push/bin/bugzilla-pushd.pl start"
 
 echo -e "\n== Starting web server"
-/usr/sbin/httpd &
-sleep 5
-tail -f /var/log/httpd/error_log /var/log/httpd/access_log
+/usr/sbin/httpd -DFOREGROUND -e info
