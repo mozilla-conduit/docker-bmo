@@ -35,24 +35,25 @@ my $conduit_password = $ENV{CONDUIT_PASSWORD} || 'password123456789!';
 my $conduit_api_key  = $ENV{CONDUIT_API_KEY}  || '';
 
 print "creating conduit user account...\n";
-my $new_user = Bugzilla::User->create(
-    {
-        login_name    => $conduit_login,
-        realname      => 'Conduit Test User',
-        cryptpassword => $conduit_password
-    },
-);
-
-if ($conduit_api_key) {
-    Bugzilla::User::APIKey->create_special(
+if (!Bugzilla::User->new({ name => $conduit_login })) {
+    my $new_user = Bugzilla::User->create(
         {
-            user_id     => $new_user->id,
-            description => 'API key for Conduit User',
-            api_key     => $conduit_api_key
-        }
+            login_name    => $conduit_login,
+            realname      => 'Conduit Test User',
+            cryptpassword => $conduit_password
+    },
     );
-}
 
+    if ($conduit_api_key) {
+        Bugzilla::User::APIKey->create_special(
+            {
+                user_id     => $new_user->id,
+                description => 'API key for Conduit User',
+                api_key     => $conduit_api_key
+            }
+        );
+    }
+}
 ##########################################################################
 # Create Phabricator Automation Bot
 ##########################################################################
@@ -62,24 +63,25 @@ my $phab_password = $ENV{PHABRICATOR_PASSWORD} || 'password123456789!';
 my $phab_api_key  = $ENV{PHABRICATOR_API_KEY}  || '';
 
 print "creating phabricator automation account...\n";
-$new_user = Bugzilla::User->create(
-    {
-        login_name    => $phab_login,
-        realname      => 'Phabricator Automation',
-        cryptpassword => $phab_password
-    },
-);
-
-if ($phab_api_key) {
-    Bugzilla::User::APIKey->create_special(
+if (!Bugzilla::User->new({ name => $phab_login })) {
+    my $new_user = Bugzilla::User->create(
         {
-            user_id     => $new_user->id,
-            description => 'API key for Phabricator Automation',
-            api_key     => $phab_api_key
-        }
+            login_name    => $phab_login,
+            realname      => 'Phabricator Automation',
+            cryptpassword => $phab_password
+        },
     );
-}
 
+    if ($phab_api_key) {
+        Bugzilla::User::APIKey->create_special(
+            {
+                user_id     => $new_user->id,
+                description => 'API key for Phabricator Automation',
+                api_key     => $phab_api_key
+            }
+        );
+    }
+}
 ##########################################################################
 # Add Users to Groups
 ##########################################################################
